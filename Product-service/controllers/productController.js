@@ -1,49 +1,68 @@
-import { Product } from "../models/product.js";
+import Product from "../models/Product.js";
+
+
+export const createProduct = async (req, res) => {
+    try {
+        const { title, description, price, sku, stock } = req.body;
+
+        const product = await Product.create({
+            title,
+            description,
+            price,
+            sku,
+            stock,
+        });
+
+        res.status(201).json(product);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
 
 
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
-        res.status(200).json({ message: products });
-    } catch (error) {
-        res.status(500).json("something went wrong");
-        console.log(error.message);
-    }
-}
-export const createProduct = async (req, res) => {
-    try {
-        const { title, description, price, stock, isActive } = req.body;
-        const product = await Product({ title, description, price, stock, isActive });
-        await product.save();
-
-        res.status(200).json({ message: "Product created successfully" });
-    } catch (error) {
-        res.status(500).json("Something went wrong");
-        console.log({ error: error.message });
+        const products = await Product.find({ isActive: true });
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
 
+
+export const getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        res.json(product);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
 export const updateProduct = async (req, res) => {
     try {
-        const product = await Product.findByIdAndUpdate(req.params, id, req.body, { new: true });
-        if (!product) {
-            res.status(500).json({ message: "product doesnt exit" });
-        }
-
-        res.status(200).json({ message: "Product updated successfully", product });
-    } catch (error) {
-        res.status(500).json({ message: "Something went wrong" });
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (!updatedProduct)
+            return res.status(404).json({ message: "Product not found" });
+        res.json(updatedProduct);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-}
+};
+
 
 export const deleteProduct = async (req, res) => {
     try {
-        await Product.findOneAndDelete(req.params.id);
-        res.status(200).json({ message: "product deleted successfully" });
-
-    } catch (error) {
-        res.status(500).json("Something went wrong");
-        console.log(error.message);
-
+        const product = await Product.findByIdAndDelete(req.params.id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        res.json({ message: "Product deleted" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-}
+};

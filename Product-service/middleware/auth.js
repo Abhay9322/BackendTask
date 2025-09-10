@@ -1,19 +1,21 @@
 import jwt from "jsonwebtoken";
 
-const auth = async (req, res, next) => {
-    const token = await req.header.authorization.split(" ")[1];
+export const protect = (req, res, next) => {
+    let token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Not authorized" });
 
-    if (!token) {
-        return res.status(400).json("access denied !");
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: "Invalid token" });
     }
+};
 
-    const isVerified = await jwt.compare(token, process.env.JWT);
-
-    if (req.user.role === "admin") {
-        next()
-    } else {
-        return res.status(500).json("Authentication is required")
+export const isAdmin = (req, res, next) => {
+    if (req.user?.role !== "admin") {
+        return res.status(403).json({ message: "Admin access only" });
     }
-}
-
-export default auth;
+    next();
+};
