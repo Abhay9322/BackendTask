@@ -15,3 +15,5 @@ const auth = async (req, res, next) => {
         return res.status(500).json("Authentication is required")
     }
 }
+
+export default auth;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import connectDB from "../config/db";
 
 const orderSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
@@ -8,4 +9,6 @@ const orderSchema = new mongoose.Schema({
     history: { type: String }
 }, { timestamps: true });
 
-export const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+
+export default connectDB;

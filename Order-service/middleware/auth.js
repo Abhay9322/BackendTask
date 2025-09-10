@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
         return res.status(400).json("access denied !");
     }
 
-    const isVerified = await jwt.compare(token, "JWT_TOEKn");
+    const isVerified = await jwt.compare(token, process.env.JWT);
 
     if (req.user.role === "admin") {
         next()

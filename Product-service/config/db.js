@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-export const connectDB = async () => {
+const connectDB = async () => {
     try {
-        await mongoose.connection(process.env.MONGO_URL);
+        await mongoose.connection(process.env.MONGO_URL || "mongodb://127.0.0.1:27017/productservice");
         console.log("MongoDB connected Succssfully");
 
     } catch (error) {
@@ -10,3 +10,5 @@ export const connectDB = async () => {
         process.exit();
     }
 }
+
+export default connectDB;

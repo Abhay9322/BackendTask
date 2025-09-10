@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 export const signup = async (req, res) => {
-    const { name, email, password, roles } = req.body;
+    const { name, email, password } = req.body;
 
     const isExists = await User.findById(req.params.id);
 
@@ -13,7 +13,7 @@ export const signup = async (req, res) => {
 
     const hashedPassword = bcrypt.hash(password, 10);
 
-    const user = await User({ name, email, password: hashedPassword, roles });
+    const user = await User({ name, email, password: hashedPassword });
 
     res.status(200).json({ message: "User registered successfully " });
 
